@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
-import { Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Text, TouchableWithoutFeedback, View, LayoutAnimation } from 'react-native';
 import { connect } from 'react-redux';
 import { CardSection } from './common';
 import * as actions from '../actions';
 
 class ListItem extends Component {
+  componentWillUpdate() {
+    LayoutAnimation.easeInEaseOut();
+  }
 
   renderDescription() {
     console.log('In renderDescription');
-    const { library, selectLibraryID } = this.props;
+    const { library, expanded } = this.props;
 
-    console.log(library.id);
-    console.log(selectLibraryID);
-
-    if (library.id === selectLibraryID) {
+    if (expanded) {
       return (
-        <Text>{library.description}</Text>
+        <CardSection>
+          <Text style={{ flex: 1, padding: 12 }}>{library.description}</Text>
+        </CardSection>
       );
     }
   }
@@ -49,6 +51,9 @@ const styles = {
   }
 };
 
-const mapStateToProps = state => ({ selectLibraryID: state.selectLibraryID });
+const mapStateToProps = (state, ownProps) => {
+  const expanded = state.selectLibraryID === ownProps.library.id;
+  return { expanded };
+ };
 
 export default connect(mapStateToProps, actions)(ListItem);
